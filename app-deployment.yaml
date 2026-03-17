@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deploy
+  namespace: photo-ns
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend-container
+          image: maheshnandi/photo-studio-app:v1.1.0
+          ports:
+            - containerPort: 3000
+ 
+          envFrom:
+            - configMapRef:
+                name: app-config
+ 
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: MONGODB_URI
+ 
+            - name: MONGODB_AUTH_URI
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: MONGODB_AUTH_URI
+ 
+            - name: MONGODB_FEEDBACK_URI
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: MONGODB_FEEDBACK_URI
